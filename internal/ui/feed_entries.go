@@ -47,6 +47,23 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if offset >= count && count > 0 {
+		offset = 0
+
+		entries, count, err = h.store.NewEntryQueryBuilder(user.ID).
+			WithFeedID(feed.ID).
+			WithStatuses(model.EntryStatusUnread).
+			WithSorting(user.EntryOrder, user.EntryDirection).
+			WithSorting("id", user.EntryDirection).
+			WithLimit(user.EntriesPerPage).
+			WithoutContent().
+			GetEntriesWithCount()
+		if err != nil {
+			response.HTMLServerError(w, r, err)
+			return
+		}
+	}
+
 	view := view.New(h.tpl, r)
 	view.Set("feed", feed)
 	view.Set("entries", entries)
