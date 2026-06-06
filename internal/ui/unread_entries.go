@@ -35,8 +35,8 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if offset >= countUnread && countUnread > 0 {
-		offset = 0
+	offset = normalizeOffset(countUnread, offset)
+	if offset == 0 && len(entries) == 0 && countUnread > 0 {
 
 		entries, countUnread, err = h.store.NewEntryQueryBuilder(user.ID).
 			WithStatuses(model.EntryStatusUnread).

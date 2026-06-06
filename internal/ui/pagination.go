@@ -20,6 +20,14 @@ type pagination struct {
 	UnreadOnly   bool
 }
 
+func normalizeOffset(total, offset int) int {
+	if offset >= total && total > 0 {
+		return 0
+	}
+
+	return offset
+}
+
 func getPagination(route string, total, offset, nbItemsPerPage int) pagination {
 	nextOffset := 0
 	prevOffset := 0

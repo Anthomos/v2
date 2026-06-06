@@ -47,8 +47,8 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if offset >= count && count > 0 {
-		offset = 0
+	offset = normalizeOffset(count, offset)
+	if offset == 0 && len(entries) == 0 && count > 0 {
 
 		entries, count, err = h.store.NewEntryQueryBuilder(user.ID).
 			WithFeedID(feed.ID).
